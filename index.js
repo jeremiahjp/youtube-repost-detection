@@ -1,9 +1,8 @@
-const {Client, Intents} = require("discord.js");
+const {Client} = require("discord.js");
 
 const secret = require('./secrets.json')
-const Enmap = require("enmap");
 const { readdirSync } = require("fs");
-const logger = require("./modules/logger.js");
+const logger = require("./modules/logger.js")
 const { intents } = require("./config.js")
 
 const client = new Client({ intents })
