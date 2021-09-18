@@ -8,9 +8,6 @@ const config = {
     "support": [],
 
     // Intents the bot needs.
-    // By default GuideBot needs Guilds, Guild Messages and Direct Messages to work.
-    // For join messages to work you need Guild Members, which is privileged and requires extra setup.
-    // For more info about intents see the README.
     intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES ]
     // Partials your bot may need should go here, CHANNEL is required for DM's
     //   partials: ["CHANNEL"]
