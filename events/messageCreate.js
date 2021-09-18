@@ -29,6 +29,7 @@ module.exports = async (client, message) => {
       else if (data) {
          let reply = `:regional_indicator_r: :regional_indicator_e: :regional_indicator_p: :regional_indicator_o: :regional_indicator_s: :regional_indicator_t:`;
          reply += `\n\`\`This was posted by ${data.username}#${data.discriminator}\`\`\nhttps://discord.com/channels/${data.guildId}/${data.channelId}/${data.messageId}`;
+         message.channel.send(reply);
          await message.react("🇷");
          await message.react("🇪");
          await message.react("🇵");
@@ -36,7 +37,6 @@ module.exports = async (client, message) => {
          await message.react("🇸");
          await message.react("🇹");
          await message.react("👎");
-         return message.channel.send(reply);
       }
    }
 
