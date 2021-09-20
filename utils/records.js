@@ -6,6 +6,7 @@ const client = redis.createClient()
 /* Promisfy so we can have promise base functionality */
 const getAsync = promisify(client.get).bind(client);
 const setAsync = promisify(client.set).bind(client);
+const setAppendAsync = promisify(client.append).bind(client);
 const setexAsync = promisify(client.setex).bind(client);
 const ttlAsync = promisify(client.ttl).bind(client);
 
@@ -16,6 +17,15 @@ const ttlAsync = promisify(client.ttl).bind(client);
 */
 const cacheSet = async (key, value) => {
     return await setAsync(key, JSON.stringify(value));
+};
+
+/**
+* Append strigify data to cache
+* @param {string} key key for the cache entry
+* @param {*} value any object/string/number 
+*/
+const appendCacheSet = async (key, value) => {
+    return await setAppendAsync(key, JSON.stringify(value));
 };
 
 /**   
@@ -31,5 +41,6 @@ const cacheGet = async (key) => {
 
 exports.cacheSet = cacheSet;
 exports.cacheGet = cacheGet;
+exports.appendCacheSet = appendCacheSet;
 
     
