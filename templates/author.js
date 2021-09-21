@@ -1,10 +1,11 @@
 module.exports = {
     User : {
-        id: "",
+        userId: "",
         username: "",
         discriminator: "", 
         messageId: "",
         channelId: "",
-        guildId: ""
+        guildId: "",
+        youtubeKey: ""
     }
 }
