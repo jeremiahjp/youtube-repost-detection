@@ -25,7 +25,9 @@ const cacheSet = async (key, value) => {
 * @param {*} value any object/string/number 
 */
 const appendCacheSet = async (key, value) => {
-    return await setAppendAsync(key, JSON.stringify(value));
+    let a = []
+    a.push(value)
+    return await setAppendAsync(key, a);
 };
 
 /**   

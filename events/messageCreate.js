@@ -1,6 +1,7 @@
 const logger = require('../modules/logger.js')
 const records = require('../utils/records.js')
 const messageChecker = require('../utils/messageChecker.js')
+const queries = require('../utils/queries.js')
 
 module.exports = async (client, message) => {
 
@@ -19,24 +20,39 @@ module.exports = async (client, message) => {
    // if the message includes the key we are looking for 
    const isYoutube = await messageChecker.isYoutube(message)
    const messageAuthor = await messageChecker.setupAuthor(message)
+   const messageInfo = await messageChecker.setupMessage(message, isYoutube)
    const data = await records.cacheGet(isYoutube);
+
+   const newFind = await queries.find(isYoutube)
+
+   console.log('newfind', JSON.stringify(newFind))
+
+   const newData = await queries.insert(messageInfo, messageAuthor)
+   console.log(newData)
 
    // If we saw youtube command, but key is not found in db, store it, silent
    if (isYoutube) {
       if (!data && messageAuthor) {
+         console.log("not found in db, store it")
          const data = await records.cacheSet(isYoutube, messageAuthor)
       }
       // key is found in db
       else if (data) {
+         console.log("found in db")
          // check to see if the guildID matches our guildID from the message
          // if not, this is new in this guild, so no repost.
          // else, its a repost
          // console.log('before parse', data)
          // console.log('json stringify', JSON.stringify(data))
          // console.log('json parse', JSON.parse(JSON.stringify(data)))
-         let dataToJson = JSON.parse(JSON.stringify(data));
+         let dataToJson = JSON.parse(data);
+         // let dataStringify = JSON.stringify(data);
+         // console.log('dataStringify', dataStringify)
          let reply = '';
-         for (let i = 0; i <= dataToJson; i++) {
+         console.log(dataToJson)
+         console.log(data.length)
+         for (let i = 0; i <= data.length; i++) {
+            console.log('looping', i)
             // If an entry matches guildId, we found it
             /// what if we have more than one match in the loop? integrity issue, spammy reply
             if (dataToJson.guildId === message.guildId) {

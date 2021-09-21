@@ -1,7 +1,9 @@
 
 const settings = require('../settings.js')
 const logger = require('../modules/logger.js')
+const messageTemplate = require('../templates/message.js')
 const author = require('../templates/author.js')
+const { MessageActionRow } = require('discord.js')
 
 const TYPE_LONG = settings.ytMatch[0]
 const TYPE_SHORT = settings.ytMatch[1]
@@ -20,6 +22,15 @@ const setupAuthor = async (message) => {
     authorInfo.messageId = message.id
     authorInfo.guildId = message.guildId
     return authorInfo
+ }
+
+ const setupMessage = async (message, context) => {
+    let messageInfo = messageTemplate.Message
+    messageInfo.channelId = message.channelId
+    messageInfo.messageId = message.id
+    messageInfo.guildId = message.guildId
+    messageInfo.context = context
+    return messageInfo
  }
 
 const isYoutube = async (message) => {
@@ -46,3 +57,4 @@ const isYoutube = async (message) => {
 
 module.exports.isYoutube = isYoutube;
 module.exports.setupAuthor = setupAuthor;
+module.exports.setupMessage = setupMessage;
