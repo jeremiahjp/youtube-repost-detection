@@ -5,6 +5,7 @@ module.exports = {
         discriminator: "", 
         messageId: "",
         channelId: "",
-        guildId: ""
+        guildId: "",
+        youtubeKey: ""
     }
 }

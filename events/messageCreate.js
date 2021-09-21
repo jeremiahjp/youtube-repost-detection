@@ -19,25 +19,28 @@ module.exports = async (client, message) => {
    
    // if the message includes the key we are looking for 
    const isYoutube = await messageChecker.isYoutube(message)
-   const messageAuthor = await messageChecker.setupAuthor(message)
+   const messageAuthor = await messageChecker.setupAuthor(message, isYoutube)
    const messageInfo = await messageChecker.setupMessage(message, isYoutube)
-   const data = await records.cacheGet(isYoutube);
+   // const data = await records.cacheGet(isYoutube);
+   // const data = {}
+   console.log('before')
+   const found = await queries.find(isYoutube)
+   console.log(found)
 
-   const newFind = await queries.find(isYoutube)
+   // console.log('newfind', JSON.stringify(newFind))
 
-   console.log('newfind', JSON.stringify(newFind))
-
-   const newData = await queries.insert(messageInfo, messageAuthor)
-   console.log(newData)
+   // const newData = await queries.insert(messageInfo, messageAuthor)
+   // console.log(newData)
 
    // If we saw youtube command, but key is not found in db, store it, silent
    if (isYoutube) {
-      if (!data && messageAuthor) {
+      // console.log('found', found)
+      if (!found && messageAuthor) {
          console.log("not found in db, store it")
-         const data = await records.cacheSet(isYoutube, messageAuthor)
+         const data = await queries.insert(messageInfo, messageAuthor)
       }
       // key is found in db
-      else if (data) {
+      else if (found) {
          console.log("found in db")
          // check to see if the guildID matches our guildID from the message
          // if not, this is new in this guild, so no repost.
@@ -45,35 +48,33 @@ module.exports = async (client, message) => {
          // console.log('before parse', data)
          // console.log('json stringify', JSON.stringify(data))
          // console.log('json parse', JSON.parse(JSON.stringify(data)))
-         let dataToJson = JSON.parse(data);
+         let dataToJson = JSON.stringify(found);
          // let dataStringify = JSON.stringify(data);
          // console.log('dataStringify', dataStringify)
          let reply = '';
-         console.log(dataToJson)
-         console.log(data.length)
-         for (let i = 0; i <= data.length; i++) {
-            console.log('looping', i)
-            // If an entry matches guildId, we found it
-            /// what if we have more than one match in the loop? integrity issue, spammy reply
-            if (dataToJson.guildId === message.guildId) {
-               console.log("we matched on guild")
-               reply = `:regional_indicator_r: :regional_indicator_e: :regional_indicator_p: :regional_indicator_o: :regional_indicator_s: :regional_indicator_t:`;
-               reply += `\n\`\`This was posted by ${dataToJson[i].username}#${dataToJson[i].discriminator}\`\`\nhttps://discord.com/channels/${dataToJson[i].guildId}/${dataToJson[i].channelId}/${dataToJson[i].messageId}`;
-               message.channel.send(reply);
-               await message.react("🇷");
-               await message.react("🇪");
-               await message.react("🇵");
-               await message.react("🇴");
-               await message.react("🇸");
-               await message.react("🇹");
-               await message.react("👎");
-            }
-            // key is found, however guildID was not. Therefore we have not seen this message
-            // in this server before. Insert it.
-            else {
-               console.log("we see this key, but not this guild. appending")
-               const data = await records.appendCacheSet(isYoutube, messageAuthor)
-            }
+         // console.log(dataToJson)
+         // If an entry matches guildId, we found it
+         /// what if we have more than one match in the loop? integrity issue, spammy reply
+         if (found.guild_id === message.guildId) {
+            console.log('matched on YT and matched on guild')
+            console.log("we matched on guild")
+            reply = `:regional_indicator_r: :regional_indicator_e: :regional_indicator_p: :regional_indicator_o: :regional_indicator_s: :regional_indicator_t:`;
+            reply += `\n\`\`1This was posted by ${found.username}#${found.discriminator}\`\`\nhttps://discord.com/channels/${found.guild_id}/${found.channel_id}/${found.message_id}`;
+            message.channel.send(reply);
+            await message.react("🇷");
+            await message.react("🇪");
+            await message.react("🇵");
+            await message.react("🇴");
+            await message.react("🇸");
+            await message.react("🇹");
+            await message.react("👎");
+         // key is found, however guildID was not. Therefore we have not seen this message
+         // in this server before. Insert it.
+         }
+         // else its not from the same guild, so insert
+         else {
+            console.log("found on YT key but not on guild id")
+            const data = await queries.insert(messageInfo, messageAuthor)
          }
       }
    }

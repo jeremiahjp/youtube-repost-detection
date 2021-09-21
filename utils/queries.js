@@ -1,11 +1,11 @@
-const postgres = require('postgres')
+// const postgres = require('postgres')
 const {Pool} = require('pg')
 const log = require('../modules/logger.js')
 
 const pool = new Pool({
         user: "postgres",
         host: "localhost",
-        password: "",
+        password: "Polkm123!",
         port: "5432"
 })
 
@@ -17,19 +17,15 @@ const insert = async (message, author) => {
     log.log(JSON.stringify(message), 'log')
     const client = await pool.connect()
 
+    // if the same user posts a link in different discord servers
+    // that is not a dupe. 
+    //further, we cannot insert into the users because that user exists previously
+    // 
     try {
         await client.query('BEGIN')
-        
-        const usersIns = 'INSERT INTO users(user_id, username, discriminator) VALUES($1, $2, $3) RETURNING user_id'
-        const values = [author.id, author.username, author.discriminator]
-        const user = await client.query(usersIns, values)
-
-        const inserGuilds = 'INSERT INTO guilds(guild_id) VALUES($1) RETURNING guild_id'
-        const insertGuildValues = [message.guildId]
-        const guild = await client.query(inserGuilds, insertGuildValues)
-
-        const insertMessages = 'INSERT INTO messages(message_id, user_id, channel_id, guild_id, youtube_id) VALUES($1, $2, $3, $4, $5) RETURNING *'
-        const insertMessagesVals = [message.messageId, user.rows[0].user_id, message.channelId, guild.rows[0].guild_id, message.context]
+        console.log('author', author)
+        const insertMessages = 'INSERT INTO messages(user_id, message_id, channel_id, guild_id, youtube_key) VALUES($1, $2, $3, $4, $5) RETURNING *'
+        const insertMessagesVals = [author.userId, author.messageId, author.channelId, author.guildId, author.youtubeKey]
         await client.query(insertMessages, insertMessagesVals)
 
         await client.query('COMMIT')
@@ -41,17 +37,17 @@ const insert = async (message, author) => {
 };
 
 
-const find = async (key) => {
+const find = async (author) => {
     const client = await pool.connect()
     const select = `SELECT * 
                     FROM messages m
-                    JOIN guilds g
-                    on m.guild_id = g.guild_id
-                    JOIN users u
-                    ON u.user_id = m.user_id
-                    WHERE LOWER(m.youtube_id) = LOWER('${key}')`
+                    WHERE m.guild_id = ${author.guildId}
+                    AND m.user_id = ${author.userId}
+                    AND LOWER(m.youtube_id) = LOWER('${author.youtubeKey}')`
 
-    return await client.query(select).rows
+    
+    const res = await client.query(select)
+    return res.rows[0]
 };
 exports.find = find;
 exports.insert = insert;

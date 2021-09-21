@@ -13,14 +13,15 @@ const SLASH = '/'
 const WATCH_PARAM = 'watch?v='
 const NUM_OF_CHARS_IN_KEY = 11
 
-const setupAuthor = async (message) => {
+const setupAuthor = async (message, youtubeKey) => {
     let authorInfo = author.User
     authorInfo.id = message.author.id
     authorInfo.username = message.author.username
     authorInfo.discriminator = message.author.discriminator
     authorInfo.channelId = message.channelId
     authorInfo.messageId = message.id
-    authorInfo.guildId = message.guildId
+    authorInfo.guildId = message.guildId,
+    authorInfo.youtubeKey = youtubeKey
     return authorInfo
  }
 
