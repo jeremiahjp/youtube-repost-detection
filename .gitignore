@@ -6,5 +6,7 @@ node_modules/
 
 # secrets
 secrets.json
+secrets.yaml
 
+#logs
 logs/*

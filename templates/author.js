@@ -1,6 +1,6 @@
 module.exports = {
     User : {
-        id: "",
+        userId: "",
         username: "",
         discriminator: "", 
         messageId: "",

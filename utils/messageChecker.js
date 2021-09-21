@@ -3,7 +3,7 @@ const settings = require('../settings.js')
 const logger = require('../modules/logger.js')
 const messageTemplate = require('../templates/message.js')
 const author = require('../templates/author.js')
-const { MessageActionRow } = require('discord.js')
+// const { MessageActionRow } = require('discord.js')
 
 const TYPE_LONG = settings.ytMatch[0]
 const TYPE_SHORT = settings.ytMatch[1]
@@ -15,7 +15,7 @@ const NUM_OF_CHARS_IN_KEY = 11
 
 const setupAuthor = async (message, youtubeKey) => {
     let authorInfo = author.User
-    authorInfo.id = message.author.id
+    authorInfo.userId = message.author.id
     authorInfo.username = message.author.username
     authorInfo.discriminator = message.author.discriminator
     authorInfo.channelId = message.channelId
@@ -34,7 +34,7 @@ const setupAuthor = async (message, youtubeKey) => {
     return messageInfo
  }
 
-const isYoutube = async (message) => {
+const extractKey = async (message) => {
     let splitMessage = message.content.split(SLASH)
     let youtubeKey = ''
     if (settings.ytMatch.some(key => {
@@ -56,6 +56,6 @@ const isYoutube = async (message) => {
     return youtubeKey
 }
 
-module.exports.isYoutube = isYoutube;
+module.exports.extractKey = extractKey;
 module.exports.setupAuthor = setupAuthor;
 module.exports.setupMessage = setupMessage;
