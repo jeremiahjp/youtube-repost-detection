@@ -11,7 +11,7 @@ try {
     let secrets = fs.readFileSync('secrets.yaml', 'utf8');
     data = yaml.load(secrets);
 } catch (e) {
-    log.log(e, "error");
+    logger.log(e, "error");
 }
 
 
