@@ -13,6 +13,7 @@ const TYPE_LONG_KEY_INDEX = 3;
 const SLASH = '/'
 const SPACE =' '
 const WATCH_PARAM = 'watch?v='
+const YOUTU_BE = "youtu.be/"
 const NUM_OF_CHARS_IN_KEY = 11
 
 const setupAuthor = async (message, youtubeKey) => {
@@ -39,32 +40,35 @@ const setupAuthor = async (message, youtubeKey) => {
 const extractKey = async (message) => {
 
     const isShortened =  await bitlyChecker.isShortened(message);
-    console.log(isShortened)
+    // console.log(isShortened)
 
     
     let splitMessage = message.content.split(SPACE)
-    console.log('splitMessage', splitMessage)
+    // console.log('splitMessage', splitMessage)
     let youtubeKey = ''
-    // loop through splitMessage and look for youtube key
+    // loop through the message, split by space and look for youtube key
     for (const word of splitMessage) {
         let found = false
         // compare word with each element in our ytMatch array 
         if (settings.ytMatch.some(key => {
-            console.log(key)
+            // console.log(key)
             // we matched in the message, continue on
             if (word.includes(key)) {
                 // we matched on TYPE_LONG
-                // if we only have one item in array but matched, it must be
                 if (key.toLocaleLowerCase() === TYPE_LONG.toLocaleLowerCase()) {
                     logger.log("Matched TYPE_LONG")
+                    // console.log('word split:' ,word.split(WATCH_PARAM))
                     youtubeKey = word.split(WATCH_PARAM)[1].substring(0,NUM_OF_CHARS_IN_KEY)
-                    return true
+                    // console.log(youtubeKey)
+                    // return true
                 }
                 // we matched on TYPE_SHORT
                 else if (key.toLocaleLowerCase() === TYPE_SHORT.toLocaleLowerCase()) {
                     logger.log("Matched TYPE_SHORT")
-                    youtubeKey = word.split(TYPE_SHORT_KEY_INDEX)[1].substring(0,NUM_OF_CHARS_IN_KEY)
-                    return true
+                    // console.log('word:', word)
+                    // console.log('word split:' ,word.split(SLASH))
+                    youtubeKey = word.split(SLASH)[2].substring(0,NUM_OF_CHARS_IN_KEY)
+                    // return true
                 }
                 logger.log(youtubeKey)
             }
