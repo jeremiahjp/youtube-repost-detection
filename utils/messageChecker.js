@@ -8,13 +8,13 @@ const bitlyChecker = require('./shortenerChecker.js')
 
 const TYPE_LONG = settings.ytMatch[0]
 const TYPE_SHORT = settings.ytMatch[1]
-const TYPE_SHORT_KEY_INDEX = 3;
-const TYPE_LONG_KEY_INDEX = 3;
 const SLASH = '/'
 const SPACE =' '
 const WATCH_PARAM = 'watch?v='
 const YOUTU_BE = "youtu.be/"
 const NUM_OF_CHARS_IN_KEY = 11
+const YOUTUBE_SHORT_SPLIT_INDEX = 3
+const YOUTUBE_LONG_SPLIT_INDEX = 1
 
 const setupAuthor = async (message, youtubeKey) => {
     let authorInfo = author.User
@@ -51,26 +51,22 @@ const extractKey = async (message) => {
         let found = false
         // compare word with each element in our ytMatch array 
         if (settings.ytMatch.some(key => {
-            // console.log(key)
             // we matched in the message, continue on
             if (word.includes(key)) {
                 // we matched on TYPE_LONG
                 if (key.toLocaleLowerCase() === TYPE_LONG.toLocaleLowerCase()) {
-                    logger.log("Matched TYPE_LONG")
+                    logger.log("Matched TYPE_LONG", 'log')
                     // console.log('word split:' ,word.split(WATCH_PARAM))
-                    youtubeKey = word.split(WATCH_PARAM)[1].substring(0,NUM_OF_CHARS_IN_KEY)
-                    // console.log(youtubeKey)
-                    // return true
+                    youtubeKey = word.split(WATCH_PARAM)[YOUTUBE_LONG_SPLIT_INDEX].substring(0,NUM_OF_CHARS_IN_KEY)
+                    logger.log(`youtubeKey: ${youtubeKey}`, 'log')
                 }
                 // we matched on TYPE_SHORT
                 else if (key.toLocaleLowerCase() === TYPE_SHORT.toLocaleLowerCase()) {
-                    logger.log("Matched TYPE_SHORT")
-                    // console.log('word:', word)
-                    // console.log('word split:' ,word.split(SLASH))
-                    youtubeKey = word.split(SLASH)[2].substring(0,NUM_OF_CHARS_IN_KEY)
+                    logger.log("Matched TYPE_SHORT", 'log')
+                    youtubeKey = word.split(SLASH)[YOUTUBE_SHORT_SPLIT_INDEX].substring(0,NUM_OF_CHARS_IN_KEY)
                     // return true
                 }
-                logger.log(youtubeKey)
+                logger.log(youtubeKey, 'warn')
             }
         }));
         if (found)
