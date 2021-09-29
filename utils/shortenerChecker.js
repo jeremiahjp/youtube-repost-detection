@@ -1,37 +1,40 @@
+const fs = require('fs')
 const { tall } = require('tall')
-const log = require('../modules/logger.js')
-const settings = require('../settings.js')
+const logger = require('../modules/logger.js')
+const yaml = require('js-yaml')
 
-
-const isShortened = async (message) => {
-
-    const SLASH = '/'
-    let splitMessage = message.content.split(SLASH)
-    let shortenedUrl = ''
-    let lengthened = ''
-    // we check through the list of shorteners
-    if (settings.shorteners.some(key => {
-        // if we match on one of the shortener keys
-        if (message.content.includes(key)) {
-            let splitUrl = splitMessage[TYPE_LONG_KEY_INDEX].split(key)[1]
-            // console.log(key)
-            // console.log(message)
-            return urlLengthen(`https://${key}/${splitUrl}`)
-        }
-    }));
-
-        // we have a shortened url, now lengthen it
-        // lengthened = urlLengthen(message)
-    //     return urlLengthen(message))
-    // })
+let shorteners = {}
+// load in the settings file to use the 
+try {
+    let settings = fs.readFileSync('settings/shorteners.yaml', 'utf8');
+    shorteners = yaml.load(settings);
+} catch (e) {
+    logger.log(e, "error");
 }
 
-const urlLengthen = (shortUrl) => {
-    tall(`${shortUrl}`)
-    .then(lengthenedUrl => {
-        return lengthenedUrl
-    })
-    .catch(err => log.log(err, "log"))
+const isShortened = async (message) => {
+    const shorUrls = shorteners.domains
+    // temporary use an ugly bunch of conditionals 
+    // for each additional shortener (there aren't THAT many out there)
+    for (const url of shorUrls) {
+        console.log('short', url)
+        if (message.toLowerCase().includes(`https://${url}`)) {
+            console.log('message', message)
+            const lengthened = await urlLengthen(message)
+            return lengthened
+        }
+    }
+}
+
+const urlLengthen = async (shortUrl) => {
+    try {
+        logger.log(shortUrl, "log")
+        return await tall(`${shortUrl}`)
+    }
+    catch (err) {
+        logger.log(err, "error")
+        return
+    }
 }
 
 exports.urlLengthen = urlLengthen;

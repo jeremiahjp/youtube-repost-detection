@@ -38,20 +38,22 @@ const setupAuthor = async (message, youtubeKey) => {
  }
 
 const extractKey = async (message) => {
-
-    const isShortened =  await bitlyChecker.isShortened(message);
-    // console.log(isShortened)
-
-    
     let splitMessage = message.content.split(SPACE)
+
     // console.log('splitMessage', splitMessage)
     let youtubeKey = ''
     // loop through the message, split by space and look for youtube key
-    for (const word of splitMessage) {
+    for (let word of splitMessage) {
+        let isShortened = await bitlyChecker.isShortened(word)
+
         let found = false
         // compare word with each element in our ytMatch array 
         if (settings.ytMatch.some(key => {
             // we matched in the message, continue on
+            if (isShortened) {
+                word = isShortened
+            }
+
             if (word.includes(key)) {
                 // we matched on TYPE_LONG
                 if (key.toLocaleLowerCase() === TYPE_LONG.toLocaleLowerCase()) {
