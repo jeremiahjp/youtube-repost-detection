@@ -22,12 +22,12 @@ module.exports = async (client, message) => {
    if (ytKey) {
       const found = await queries.find(messageAuthor)
       if (!found && messageAuthor) {
-         log.log('not found in db, insert', 'log')
+         log.log('not found in db, insert', 'warn')
          await queries.insert(messageAuthor)
       }
       // key is found in db
       else if (found) {
-         log.log('found in db', 'log')
+         log.log('found in db', 'warn')
          if (found.guild_id === message.guildId) {
             let reply = `:regional_indicator_r: :regional_indicator_e: :regional_indicator_p: :regional_indicator_o: :regional_indicator_s: :regional_indicator_t:`;
             reply += `\n\`\`This was posted by ${found.username}#${found.discriminator}\`\`\nhttps://discord.com/channels/${found.guild_id}/${found.channel_id}/${found.message_id}`;
@@ -42,7 +42,7 @@ module.exports = async (client, message) => {
          }
          // else its not from the same guild, so insert
          else {
-            log.log("YT key found in db, but not in this guild. Inserting.", 'info')
+            log.log("YT key found in db, but not in this guild. Inserting.", 'warn')
             await queries.insert(messageInfo, messageAuthor)
          }
       }
