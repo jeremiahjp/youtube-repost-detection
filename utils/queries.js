@@ -11,10 +11,10 @@ try {
     log.log(e, "error");
 }
 const pool = new Pool({
-        user: data.postgres.username,
-        host: data.postgres.hostname,
-        password: data.postgres.password,
-        port: data.postgres.port
+    user: data.postgres.username,
+    host: data.postgres.hostname,
+    password: data.postgres.password,
+    port: data.postgres.port
 })
 
 /**
